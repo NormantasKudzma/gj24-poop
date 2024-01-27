@@ -11,6 +11,8 @@ public class Parallax : MonoBehaviour
     public float m_SpawnDiffMin = 0.0f;
     public float m_SpawnDiffMax = 0.0f;
 
+    private float m_SpawnDist = 10.0f;
+
     private List<GameObject> m_Spawned = new List<GameObject>();
 
     // Start is called before the first frame update
@@ -27,6 +29,8 @@ public class Parallax : MonoBehaviour
 
         m_ScrollSpeed /= 100;
         m_ScrollSpeed *= g_GlobalScrollSpeed;
+
+        m_SpawnDist /= transform.localScale.x;
     }
 
     // Update is called once per frame
@@ -34,9 +38,9 @@ public class Parallax : MonoBehaviour
     {
         for (int i = m_Spawned.Count - 1; i >= 0; --i)
         {
-            var nextP = m_Spawned[i].transform.position;
+            var nextP = m_Spawned[i].transform.localPosition;
             nextP.x -= m_ScrollSpeed;
-            m_Spawned[i].transform.position = nextP;
+            m_Spawned[i].transform.localPosition = nextP;
 
             if (nextP.x <= -20)
             {
@@ -46,12 +50,12 @@ public class Parallax : MonoBehaviour
         }
 
         var last = m_Spawned[m_Spawned.Count - 1];
-        if (last.transform.position.x <= 10.0f)
+        if (last.transform.localPosition.x <= m_SpawnDist)
         {
             var r = last.GetComponent<SpriteRenderer>();
             var halfSize = r.bounds.extents;
             halfSize.y = 0;
-            SpawnNew(last.transform.position + halfSize);
+            SpawnNew(last.transform.localPosition + halfSize);
         }
     }
 

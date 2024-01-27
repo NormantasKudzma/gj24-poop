@@ -31,6 +31,8 @@ public class Poop : MonoBehaviour
             Vector3 newPoopPos = col.collider.offset;
             newPoopPos.z -= 0.1f;
             transform.localPosition = newPoopPos;
+
+            transform.localScale = Vector3.Scale(transform.localScale, col.gameObject.transform.localScale); 
         }
         else
         {
