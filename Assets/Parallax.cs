@@ -15,6 +15,7 @@ public class Parallax : MonoBehaviour
     public bool m_DoGrayshift = true;
 
     private float m_SpawnDist = 10.0f;
+    private float m_DestroyAt = -20.0f;
 
     private List<GameObject> m_Spawned = new List<GameObject>();
 
@@ -35,8 +36,10 @@ public class Parallax : MonoBehaviour
 
         m_ScrollSpeed /= 100;
         m_ScrollSpeed *= g_GlobalScrollSpeed;
+        m_ScrollSpeed /= transform.localScale.x;
 
         m_SpawnDist /= transform.localScale.x;
+        m_DestroyAt /= transform.localScale.x;
 
         ShuffleTiles();
     }
@@ -50,7 +53,7 @@ public class Parallax : MonoBehaviour
             nextP.x -= m_ScrollSpeed;
             m_Spawned[i].transform.localPosition = nextP;
 
-            if (nextP.x <= -20)
+            if (nextP.x <= m_DestroyAt)
             {
                 Destroy(m_Spawned[i]);
                 m_Spawned.RemoveAt(i);
@@ -88,11 +91,11 @@ public class Parallax : MonoBehaviour
 
     private void ApplyGrayshift(GameObject obj)
     {
-        const float shiftStartAt = 30;
+        const float shiftStartAt = 10;
         if (m_DoGrayshift && transform.localPosition.z > shiftStartAt)
         {
             const float shiftCapAt = 60;
-            const float maxGray = 0.3f;
+            const float maxGray = 0.36f;
             float grayshift = 1.0f - Mathf.Clamp(transform.localPosition.z, 0, shiftCapAt) / shiftCapAt * maxGray;
             obj.GetComponent<SpriteRenderer>().color = new Color(grayshift, grayshift, grayshift, 1.0f);
         }
