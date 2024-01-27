@@ -10,6 +10,7 @@ public class Parallax : MonoBehaviour
     public float m_ScrollSpeed = 0.5f;
     public float m_SpawnDiffMin = 0.0f;
     public float m_SpawnDiffMax = 0.0f;
+    public bool m_DoGrayshift = true;
 
     private float m_SpawnDist = 10.0f;
 
@@ -22,6 +23,9 @@ public class Parallax : MonoBehaviour
         {
             m_Spawned.Add(transform.GetChild(i).gameObject);
         }
+
+        m_Spawned.ForEach(ApplyGrayshift);
+
         m_Spawned.Sort((a, b) =>
         {
             return a.transform.localPosition.x > b.transform.localPosition.x ? 1 : -1;
@@ -66,8 +70,21 @@ public class Parallax : MonoBehaviour
         Vector2 off = newTile.GetComponent<SpriteRenderer>().bounds.extents;
         float rand = Random.Range(m_SpawnDiffMin, m_SpawnDiffMax);
 
+        ApplyGrayshift(newTile);
         newPos.x = off.x + at.x + rand;
         newTile.transform.localPosition = newPos;
         m_Spawned.Add(newTile);
+    }
+
+    private void ApplyGrayshift(GameObject obj)
+    {
+        const float shiftStartAt = 30;
+        if (m_DoGrayshift && transform.localPosition.z > shiftStartAt)
+        {
+            const float shiftCapAt = 60;
+            const float maxGray = 0.3f;
+            float grayshift = 1.0f - Mathf.Clamp(transform.localPosition.z, 0, shiftCapAt) / shiftCapAt * maxGray;
+            obj.GetComponent<SpriteRenderer>().color = new Color(grayshift, grayshift, grayshift, 1.0f);
+        }
     }
 }
