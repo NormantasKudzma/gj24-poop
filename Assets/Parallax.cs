@@ -7,6 +7,8 @@ public class Parallax : MonoBehaviour
     public static float g_GlobalScrollSpeed = 1.2f;
 
     public List<GameObject> m_Tiles;
+    private int nextTileIndex = 0;
+
     public float m_ScrollSpeed = 0.5f;
     public float m_SpawnDiffMin = 0.0f;
     public float m_SpawnDiffMax = 0.0f;
@@ -35,6 +37,8 @@ public class Parallax : MonoBehaviour
         m_ScrollSpeed *= g_GlobalScrollSpeed;
 
         m_SpawnDist /= transform.localScale.x;
+
+        ShuffleTiles();
     }
 
     // Update is called once per frame
@@ -65,7 +69,13 @@ public class Parallax : MonoBehaviour
 
     private void SpawnNew(Vector2 at)
     {
-        var newTile = GameObject.Instantiate(m_Tiles[Random.Range(0, m_Tiles.Count)], transform);
+        var newTile = GameObject.Instantiate(m_Tiles[nextTileIndex], transform);
+        if (++nextTileIndex >= m_Tiles.Count)
+        {
+            nextTileIndex = 0;
+            ShuffleTiles();
+        }
+
         Vector3 newPos = Vector3.zero;
         Vector2 off = newTile.GetComponent<SpriteRenderer>().bounds.extents;
         float rand = Random.Range(m_SpawnDiffMin, m_SpawnDiffMax);
@@ -85,6 +95,19 @@ public class Parallax : MonoBehaviour
             const float maxGray = 0.3f;
             float grayshift = 1.0f - Mathf.Clamp(transform.localPosition.z, 0, shiftCapAt) / shiftCapAt * maxGray;
             obj.GetComponent<SpriteRenderer>().color = new Color(grayshift, grayshift, grayshift, 1.0f);
+        }
+    }
+
+    private void ShuffleTiles()
+    {
+        if (m_Tiles.Count == 1) { return; }
+
+        for (int i = 0; i < m_Tiles.Count; ++i)
+        {
+            int swapWith = Random.Range(0, m_Tiles.Count);
+            var temp = m_Tiles[i];
+            m_Tiles[i] = m_Tiles[swapWith];
+            m_Tiles[swapWith] = temp;
         }
     }
 }
