@@ -4,6 +4,12 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    enum SoundLength
+    {
+        SHORT,
+        LONG
+    }
+
     public GameObject m_PoopFab;
     public float m_MoveSpeed = 0.02f;
 
@@ -18,10 +24,17 @@ public class Player : MonoBehaviour
 
     private Transform m_PoopSpawnPos;
 
+    private RandomSoundPlayer m_PoopShortSound;
+    private RandomSoundPlayer m_PoopLongSound;
+    private int m_PlaySoundCounter = 0;
+    private float m_PlaySoundCooldown = 0.0f;
+
     // Start is called before the first frame update
     void Start()
     {
         m_PoopSpawnPos = transform.Find("PoopSpawnPos");
+        m_PoopShortSound = transform.Find("SoundShort").GetComponent<RandomSoundPlayer>();
+        m_PoopLongSound = transform.Find("SoundLong").GetComponent<RandomSoundPlayer>();
 
         m_ShotsRemain = m_MaxShots;
 
@@ -55,11 +68,23 @@ public class Player : MonoBehaviour
             if (m_ShootTimer <= 0.0f)
             {
                 DoPoop(nextP);
+                if (m_PlaySoundCounter > 2)
+                {
+                    PlaySound(SoundLength.LONG);
+                }
+                ++m_PlaySoundCounter;
             }
         }
         else
         {
             RechargePoop();
+
+            if (m_PlaySoundCounter > 0)
+            {
+                PlaySound(SoundLength.SHORT);
+            }
+            m_PlaySoundCounter = 0;
+            m_PlaySoundCooldown -= Time.deltaTime;
         }
     }
 
@@ -89,6 +114,21 @@ public class Player : MonoBehaviour
             m_RechargeTimer = 0.0f;
             m_ShotsRemain++;
             m_ShotsText.GetComponent<Text>().text = string.Format(m_ShotsTextFormat, m_ShotsRemain);
+        }
+    }
+
+    private void PlaySound(SoundLength length)
+    {
+        if (m_PlaySoundCooldown > 0.0f) { return; }
+        m_PlaySoundCooldown = 0.3f;
+
+        if (length == SoundLength.LONG)
+        {
+            m_PoopLongSound.PlayRandom();
+        }
+        else
+        {
+            m_PoopShortSound.PlayRandom();
         }
     }
 }

@@ -2703,6 +2703,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 195562449770457835, guid: f3f97c9ea3ae7ed4b80d8334c498921b,
+        type: 3}
+      propertyPath: m_Sounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 6e84286c431c9024e87d5836ab965603, type: 3}
     - target: {fileID: 2895452790437021045, guid: f3f97c9ea3ae7ed4b80d8334c498921b,
         type: 3}
       propertyPath: m_ShotsText

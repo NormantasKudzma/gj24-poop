@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Poop : MonoBehaviour
 {
+    public GameObject m_ExclamationMark;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +34,18 @@ public class Poop : MonoBehaviour
             newPoopPos.z -= 0.1f;
             transform.localPosition = newPoopPos;
 
-            transform.localScale = Vector3.Scale(transform.localScale, col.gameObject.transform.localScale); 
+            transform.localScale = Vector3.Scale(transform.localScale, col.gameObject.transform.localScale);
+
+            var unhappy = col.gameObject.GetComponent<RandomSoundPlayer>();
+            if (unhappy != null) { unhappy.PlayRandom(); }
+
+            var exclamation = GameObject.Instantiate(m_ExclamationMark, col.gameObject.transform);
+            Vector3 exs = exclamation.transform.localScale;
+            exs.x /= col.gameObject.transform.localScale.y;
+            exs.y /= col.gameObject.transform.localScale.y;
+            exs.x = Mathf.Abs(exs.x);
+            exclamation.transform.localScale = exs;
+            exclamation.transform.localPosition = newPoopPos;
         }
         else
         {
