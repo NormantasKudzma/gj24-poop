@@ -16,11 +16,11 @@ public class Player : MonoBehaviour
     public int m_MaxShots = 10;
     public float m_ShotInterval = 0.1f;
     public float m_ShotRechargeSpeed = 0.5f;
-    public GameObject m_ShotsText;
     private int m_ShotsRemain = 0;
     private float m_ShootTimer = 0;
     private float m_RechargeTimer = 0.0f;
-    private string m_ShotsTextFormat;
+    public GameObject m_ShotsBar;
+    private Vector3 m_ShotsBarMaxScale;
 
     private Transform m_PoopSpawnPos;
 
@@ -38,8 +38,8 @@ public class Player : MonoBehaviour
 
         m_ShotsRemain = m_MaxShots;
 
-        m_ShotsTextFormat = m_ShotsText.GetComponent<Text>().text;
-        m_ShotsText.GetComponent<Text>().text = string.Format(m_ShotsTextFormat, m_ShotsRemain);
+        m_ShotsBarMaxScale = m_ShotsBar.transform.localScale;
+        UpdateBar();
     }
 
     // Update is called once per frame
@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
         m_ShootTimer = m_ShotInterval;
         if (m_ShotsRemain <= 0) { return; }
         m_ShotsRemain--;
-        m_ShotsText.GetComponent<Text>().text = string.Format(m_ShotsTextFormat, m_ShotsRemain);
+        UpdateBar();
 
         var poop = Instantiate(m_PoopFab);
         poop.transform.position = m_PoopSpawnPos.transform.position;
@@ -113,7 +113,7 @@ public class Player : MonoBehaviour
         {
             m_RechargeTimer = 0.0f;
             m_ShotsRemain++;
-            m_ShotsText.GetComponent<Text>().text = string.Format(m_ShotsTextFormat, m_ShotsRemain);
+            UpdateBar();
         }
     }
 
@@ -130,5 +130,11 @@ public class Player : MonoBehaviour
         {
             m_PoopShortSound.PlayRandom();
         }
+    }
+
+    private void UpdateBar()
+    {
+        m_ShotsBar.transform.localScale = Mathf.Min(1.0f, (float)m_ShotsRemain / m_MaxShots) * m_ShotsBarMaxScale;
+
     }
 }
